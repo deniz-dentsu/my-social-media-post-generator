@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["esnext", "dom"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "strict": true,
+    "strictPropertyInitialization": false, // This might help if you're not initializing properties
+    "types": [
+      "@nuxt/types",
+      "@types/node"
+    ],
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "include": [
+    "components/**/*.vue",
+    "plugins/**/*.ts",
+    "store/**/*.ts",
+    // ...
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
