@@ -1,8 +1,14 @@
 <template>
   <div class="copy-generator">
     <button @click="generateCaptions">Generate Captions</button>
-    <div v-if="captions.length > 0" class="captions-list">
-      <div v-for="(caption, index) in captions" :key="index" class="caption">
+    <div v-if="captions.length > 0" class="captions-container">
+      <div
+        v-for="(caption, index) in captions"
+        :key="index"
+        class="caption"
+        :class="{ 'is-selected': selectedCaptionIndex === index }"
+        @click="selectCaption(index)"
+      >
         {{ caption }}
       </div>
     </div>
@@ -19,10 +25,18 @@ const openaiApiKey = process.env.OPENAI_API_KEY;
 export default class CopyGenerator extends Vue {
   @Prop({ default: '' }) readonly topic!: string;
   captions: string[] = [];
+  selectedCaptionIndex: number | null = null;
+
 
   @Watch('topic')
   onTopicChanged(newVal: string, oldVal: string) {
     console.log('Topic prop changed:', newVal);
+  }
+
+  selectCaption(index: number) {
+    this.selectedCaptionIndex = index;
+    // Here you can do additional things with the selected caption,
+    // such as emitting an event or performing an action
   }
 
   async generateCaptions() {
@@ -90,5 +104,15 @@ export default class CopyGenerator extends Vue {
   background-color: #e9e9e9;
   padding: 10px;
   border-radius: 5px;
+}
+
+.caption:hover {
+  background-color: #f0f0f0;
+}
+
+.is-selected {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
 }
 </style>
