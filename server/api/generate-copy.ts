@@ -1,35 +1,64 @@
+require('dotenv').config(); // Load dotenv configuration
+
+const openaiApiKey = process.env.OPENAI_API_KEY;
+
+
+
 import { Request, Response } from 'express';
+import OpenAI from 'openai';
 
-const axios = require('axios');
 
-module.exports = async (req: Request, res: Response) => {
+if (!openaiApiKey) {
+  throw new Error('The OPENAI_API_KEY environment variable is missing or empty');
+}
+
+// Create a `ClientOptions` object with the API key
+const openai = new OpenAI({
+  apiKey: openaiApiKey
+});
+
+
+const handler = async (req: Request, res: Response) => {
   try {
-    const { tone } = req.body;
-    const prompt = `Write a ${tone} piece of text for a social media post:`;
+    console.log(req.headers, req.body); // Log incoming request for debugging
 
-    // Use the "gpt-3.5-turbo" model for OpenAI's Chat API
-    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-      model: "gpt-3.5-turbo",
-      messages: [{
-        role: "system",
-        content: "You are a helpful assistant."
-      },{
-        role: "user",
-        content: prompt
-      }]
-    }, {
+    const { tone } = req.body;
+    let prompt = `Write a ${tone} piece of text for a social media post:`;
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-      }
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        messages: [{ role: "system", content: "You are a helpful assistant." }],
+        model: "gpt-3.5-turbo",
+        max_tokens: 50,
+        temperature: tone === 'friendly' ? 0.9 : 0.7,
+      }),
     });
 
-    // Assume the last message in the response is the completion
-    const messages = response.data.data.messages;
-    const lastMessage = messages[messages.length - 1];
-    
-    res.json({ copy: lastMessage.content });
-  } catch (error) {
-    console.error('OpenAI API error:', error);
-    res.status(500).json({ message: 'Error generating copy' });
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(`API call failed: ${responseData.error}`);
+    }
+
+    const generatedText = responseData.choices[0].text.trim();
+    res.json({ copy: generatedText });
+  } catch (error: unknown) {
+    // Narrow down the type of 'error' to 'Error' before accessing 'message'
+    if (error instanceof Error) {
+      console.error('OpenAI API error:', error);
+      res.status(500).json({ message: 'Error generating copy', error: error.message });
+    } else {
+      console.error('An unknown error occurred:', error);
+      res.status(500).json({ message: 'An unknown error occurred' });
+    }
   }
+  
 };
+
+module.exports = handler;

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'my-social-media-post-generator',
@@ -16,6 +16,15 @@ export default {
     ]
   },
 
+
+  env: {
+    openaiApiKey: process.env.OPENAI_API_KEY,
+  },
+
+  // publicRuntimeConfig: {
+  //   openaiApiKey: process.env.OPENAI_API_KEY
+  // },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
@@ -29,23 +38,45 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    // https://go.nuxtjs.dev/typescript
     '@nuxt/typescript-build',
+    '@nuxtjs/dotenv',
   ],
+
+  // axios: {
+  //   // Base URL of your API
+  //   baseURL: process.env.API_URL || 'https://api.openai.com/v1/engines/gpt-3.5-turbo/completions',
+  // },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
+    '@nuxt/http'
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    /*
+     ** You can extend webpack config here
+     */
+    // extend(config, ctx) {
+    //   if (ctx.isServer) {
+    //     config.externals = [
+    //       function (context, request, callback) {
+    //         if (/^axios/.test(request)) {
+    //           return callback(null, `commonjs ${request}`);
+    //         }
+    //         callback();
+    //       },
+    //     ];
+    //   }
+    // },
   },
-
   // Server Middleware
   serverMiddleware: [
     // API middleware
     { path: '/api/generate-copy', handler: '~/server/api/generate-copy.ts' },
+    { path: '/api', handler: '~/server/api/index.js' },
+    
   ],
 }

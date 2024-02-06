@@ -1,27 +1,19 @@
 {
   "compilerOptions": {
-    "target": "esnext",
     "module": "esnext",
+    "target": "es2017",
     "moduleResolution": "node",
-    "lib": ["esnext", "dom"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "strict": true,
-    "strictPropertyInitialization": false, // This might help if you're not initializing properties
+    "strictPropertyInitialization": true, // Set to true
+    "allowJs": true, // Allow JavaScript files to be imported into TypeScript files
     "types": [
-      "@nuxt/types",
-      "@types/node"
+      "node" // If you are using Node.js types
     ],
     "typeRoots": ["./node_modules/@types"]
   },
-  "include": [
-    "components/**/*.vue",
-    "plugins/**/*.ts",
-    "store/**/*.ts",
-    // ...
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["path/to/vue-shim.d.ts", "**/*.ts", "**/*.d.ts", "**/*.tsx", "**/*.vue"],
+  "exclude": ["node_modules"]
 }
