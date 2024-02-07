@@ -1,76 +1,119 @@
 <template>
-  <div class="cutout-selector">
-    <div class="cutouts">
-      <div v-for="(cutout, index) in cutouts" :key="index" class="cutout" @click="selectCutout(cutout)">
-        <img :src="cutout.image" :alt="`Cutout ${index}`" />
-      </div>
+  <div>
+    <!-- Shape Selector -->
+    <div class="shape-selector">
+    <div
+      v-for="(cutout, index) in cutouts"
+      :key="index"
+      class="shape-option"
+      :class="{ 'selected': selectedShape === cutout.name }"
+      @click="selectShape(cutout.name)"
+    >
+      <img
+        :class="{ 'masks': true, 'active': selectedShape === cutout.name }"
+        :src="require(`@/assets/${cutout.image}`)"
+        :alt="cutout.name"
+      />
     </div>
-    <input type="color" v-model="selectedColor" />
+  </div>
+
+    <!-- Color Selector -->
+    <div class="color-selector">
+      <div
+        v-for="(colorOption, index) in colorOptions"
+        :key="index"
+        class="color-option"
+        :style="{ backgroundColor: colorOption }"
+        @click="selectedColor = colorOption"
+      ></div>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+<script>
+import Mask0 from '@/assets/Mask_0.png';
+import Mask1 from '@/assets/Mask_1.png';
+import { defineComponent, ref } from 'vue';
 
-interface Cutout {
-  image: string;
-  color: string;
-}
+export default defineComponent({
+  data() {
+    return {
+      selectedShape: 'shape1', // Initial selected shape
+      selectedColor: '#000000', // Initial selected color
+      cutouts: [
+        { name: 'nomask', image: 'Mask_0.png' },
+        { name: 'mask1', image: 'Mask_1.png' },
+        { name: 'mask2', image: 'Mask_2.png' },
+        { name: 'mask3', image: 'Mask_3.png' },
+        { name: 'mask4', image: 'Mask_4.png' },
+        // ...other cutouts
+      ],
+      colorOptions: [
+        '#0000ff', '#00ff00', '#ff0000', // ... other colors ...
+      ],
+    };
+  },
 
-@Component
-export default class CutoutSelector extends Vue {
-  cutouts: Cutout[] = [
-    { image: 'cutout1.png', color: '#FFFFFF' },
-    // ... other cutouts ...
-  ];
+  methods: {
+    selectShape(name) {
+      this.selectedShape = name; // Set the selected shape
+    },
+  },
 
-  selectedColor: string = '#FFFFFF';
-  selectedCutout: Cutout | null = null;
-
-  selectCutout(cutout: Cutout) {
-    this.selectedCutout = cutout;
-    // Apply the selected color to the cutout
-    // You might need to adjust this logic based on how you plan to apply the colors
-  }
-}
+});
 </script>
 
-
-<style scoped>
-.cutout-selector {
+<style>
+.shape-selector {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-  background: #f4f4f4; /* Replace with your desired background color */
-  border-radius: 8px; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  justify-content: center;
+  margin-bottom: 1rem; /* Spacing between shape selector and color selector */
 }
 
-.cutouts {
+.shape-option {
+  margin: 0 0.5rem; /* Space between shapes */
+  padding: 0.5rem;
+  cursor: pointer;
+  border: 2px solid transparent; /* No border by default */
+}
+
+.shape-option.selected {
+  border-color: #2d70ae90; /* Border to indicate selection */
+  border-radius: 10%;
+}
+
+.color-selector {
   display: flex;
-  justify-content: space-between; /* Distribute cutouts evenly */
-  width: 100%; /* Full width to contain cutouts */
-  margin-bottom: 16px; /* Spacing between cutouts and color picker */
+  justify-content: center;
 }
 
-.cutout {
-  height: 100px; /* Fixed height for cutouts */
-  width: 100px; /* Fixed width for cutouts */
-  background-size: cover; /* Cover the area without stretching */
-  background-position: center; /* Center the image within the cutout */
-  cursor: pointer; /* Pointer cursor on hover */
-  border: 2px solid transparent; /* Transparent border for spacing and visual feedback */
-  border-radius: 8px; /* Rounded corners for the cutouts */
+.color-option {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  margin: 0 0.5rem; /* Space between colors */
+  cursor: pointer;
+  border: 2px solid #fff; /* White border for color options */
 }
 
-.cutout:hover, .cutout.selected {
-  border-color: #007bff; /* Highlight color for hover/selected state */
+.masks {
+  width: 40px;
+  height: 40px;
+  transition: all 0.3s ease;
+  opacity: 0.6; 
 }
 
-.color-picker {
-  border: none; /* Remove default border */
-  height: 36px; /* Fixed height for the color picker */
-  cursor: pointer; /* Pointer cursor on hover */
+.masks.active {
+  /* Styles for the selected image */
+  opacity: 1; /* Selected item has full opacity */
+}
+
+.selected {
+  /* Additional styles to indicate selection, like a border */
+  border: 2px solid blue;
+}
+
+.color-option:hover {
+  border-color: #000; /* Border color on hover */
 }
 </style>

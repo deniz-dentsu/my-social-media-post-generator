@@ -3,10 +3,19 @@
     <Sidebar @image-selected="handleImageSelected" @topic-updated="handleTopicUpdate" />
     <div class="content">
       <CopyGenerator :topic="topic" @captions-generated="handleCaptionsGenerated" />
+      <CutoutSelector @mask-selected="handleMaskSelected" />
+             <!-- Display the result with the applied mask -->
+      <div v-if="uploadedImage">
+        <img :src="uploadedImage" alt="Uploaded Image" class="uploaded-image" />
+        <!-- The mask will be applied here -->
+        <svg v-if="mask" class="mask-overlay" :style="{ 'fill': maskColor }">
+          <use :href="`#${mask}`" />
+        </svg>
       <!-- Include other components as necessary -->
     </div>
     <!-- Include the ResultDisplay component here if needed -->
   </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -19,11 +28,16 @@ export default defineComponent({
   components: {
     Sidebar,
     CopyGenerator,
+    CutoutSelector,
     // ... other components ...
   },
+
   data() {
     return {
       topic: '', // This will hold the topic entered in the sidebar
+      uploadedImage: '', // Will hold the base64 string of the uploaded image
+      mask: '', // Will hold the id of the svg mask to apply
+      maskColor: '', // Will hold the color for the mask
       // ... other data properties ...
     };
   },
@@ -38,6 +52,11 @@ export default defineComponent({
     },
     handleCaptionsGenerated(captions: string[]) {
       // Handle the generated captions here, if necessary
+    },
+    handleMaskSelected(maskDetails: { id: string; color: string; }) {
+      // Set the selected mask id and color
+      this.mask = maskDetails.id;
+      this.maskColor = maskDetails.color;
     },
     // ... other methods ...
   },

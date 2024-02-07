@@ -16,6 +16,12 @@ module.exports = {
     ]
   },
 
+  // resolve: {
+  //   alias: {
+  //     '@': path.resolve(__dirname, 'src/'), // Make sure this points to your src directory
+  //   },
+  // },
+
 
   env: {
     openaiApiKey: process.env.OPENAI_API_KEY,

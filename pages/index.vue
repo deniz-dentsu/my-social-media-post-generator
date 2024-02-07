@@ -8,6 +8,9 @@
     <SocialMediaPostButton />
     <!-- You can add more components as needed -->
   </div>
+
+
+
 </template>
 
 
