@@ -2,20 +2,21 @@
   <div>
     <!-- Shape Selector -->
     <div class="shape-selector">
-    <div
-      v-for="(cutout, index) in cutouts"
-      :key="index"
-      class="shape-option"
-      :class="{ 'selected': selectedShape === cutout.name }"
-      @click="selectShape(cutout.name)"
-    >
-      <img
-        :class="{ 'masks': true, 'active': selectedShape === cutout.name }"
-        :src="require(`@/assets/${cutout.image}`)"
-        :alt="cutout.name"
-      />
+      <div
+        v-for="(cutout, index) in cutouts"
+        :key="index"
+        class="shape-option"
+        :class="{ 'selected': selectedShape === cutout.name }"
+        @click="selectShape(cutout)"
+        >
+        <!-- Display the shape image -->
+        <img
+          class="masks"
+          :src="require(`@/assets/${cutout.image}`)"
+          :alt="cutout.name"
+        />
+      </div>
     </div>
-  </div>
 
     <!-- Color Selector -->
     <div class="color-selector">
@@ -41,11 +42,11 @@ export default defineComponent({
       selectedShape: 'shape1', // Initial selected shape
       selectedColor: '#000000', // Initial selected color
       cutouts: [
-        { name: 'nomask', image: 'Mask_0.png' },
-        { name: 'mask1', image: 'Mask_1.png' },
-        { name: 'mask2', image: 'Mask_2.png' },
-        { name: 'mask3', image: 'Mask_3.png' },
-        { name: 'mask4', image: 'Mask_4.png' },
+        { name: 'nomask', image: 'Mask_0.png', svg: 'Mask_0.svg' },
+        { name: 'mask1', image: 'Mask_1.png', svg: 'Mask_1.svg' },
+        { name: 'mask2', image: 'Mask_2.png', svg: 'Mask_2.svg' },
+        { name: 'mask3', image: 'Mask_3.png', svg: 'Mask_3.svg' },
+        { name: 'mask4', image: 'Mask_4.png', svg: 'Mask_4.svg' },
         // ...other cutouts
       ],
       colorOptions: [
@@ -55,8 +56,9 @@ export default defineComponent({
   },
 
   methods: {
-    selectShape(name) {
-      this.selectedShape = name; // Set the selected shape
+    selectShape(cutout) {
+      this.selectedShape = cutout.name;
+      this.$emit('mask-selected', cutout.svg); // Emit the selected SVG path
     },
   },
 

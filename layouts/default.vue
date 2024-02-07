@@ -5,12 +5,12 @@
       <CopyGenerator :topic="topic" @captions-generated="handleCaptionsGenerated" />
       <CutoutSelector @mask-selected="handleMaskSelected" />
              <!-- Display the result with the applied mask -->
-      <div v-if="uploadedImage">
+      <div v-if="uploadedImage" class="image-preview">
         <img :src="uploadedImage" alt="Uploaded Image" class="uploaded-image" />
         <!-- The mask will be applied here -->
-        <svg v-if="mask" class="mask-overlay" :style="{ 'fill': maskColor }">
-          <use :href="`#${mask}`" />
-        </svg>
+        <div v-if="selectedMask" class="svg-mask">
+        <img :src="require(`@/assets/${selectedMask}`)" />
+        </div>
       <!-- Include other components as necessary -->
     </div>
     <!-- Include the ResultDisplay component here if needed -->
@@ -36,7 +36,7 @@ export default defineComponent({
     return {
       topic: '', // This will hold the topic entered in the sidebar
       uploadedImage: '', // Will hold the base64 string of the uploaded image
-      mask: '', // Will hold the id of the svg mask to apply
+      selectedMask: null, // This will hold the path to the selected SVG mask
       maskColor: '', // Will hold the color for the mask
       // ... other data properties ...
     };
@@ -45,6 +45,8 @@ export default defineComponent({
     handleImageSelected(imageData: string) {
       // Handle the selected image here
       // Possibly set it to a data property or emit it to a child component
+      this.uploadedImage = imageData;
+
     },
     handleTopicUpdate(newTopic: string) {
       console.log('Received new topic:', newTopic); // Add this line for debugging
@@ -53,10 +55,8 @@ export default defineComponent({
     handleCaptionsGenerated(captions: string[]) {
       // Handle the generated captions here, if necessary
     },
-    handleMaskSelected(maskDetails: { id: string; color: string; }) {
-      // Set the selected mask id and color
-      this.mask = maskDetails.id;
-      this.maskColor = maskDetails.color;
+    handleMaskSelected(svgPath: null) {
+      this.selectedMask = svgPath;
     },
     // ... other methods ...
   },
@@ -67,6 +67,18 @@ export default defineComponent({
 
 
 <style>
+
+.image-preview {
+  position: relative;
+}
+
+.svg-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
 
 .container {
   display: flex;
