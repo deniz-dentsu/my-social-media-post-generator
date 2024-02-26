@@ -50,7 +50,7 @@ export default defineComponent({
         // ...other cutouts
       ],
       colorOptions: [
-        '#0000ff', '#00ff00', '#ff0000', // ... other colors ...
+        '#66263d', '#145a46', '#8a383d', '#4f7d38', '#b67012' // ... other colors ...
       ],
     };
   },
@@ -61,6 +61,20 @@ export default defineComponent({
       this.$emit('mask-selected', cutout.svg); // Emit the selected SVG path
     },
   },
+
+  async loadAndApplyColorToSVG(svgFileName, color) {
+    const svgPath = `@/assets/${svgFileName}`;
+    try {
+      const response = await fetch(svgPath);
+      const svgText = await response.text();
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+      svgDoc.querySelector('svg').setAttribute('fill', color);
+      this.$refs.svgContainer.innerHTML = svgDoc.querySelector('svg').outerHTML;
+    } catch (error) {
+      console.error("Failed to load or manipulate SVG:", error);
+    }
+  }
 
 });
 </script>
